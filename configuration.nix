@@ -5,6 +5,7 @@
     ./modules/base.nix
     ./modules/control-plane.nix
     ./modules/flannel-rbac.nix
+    ./modules/pod-api-access.nix
   ];
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
