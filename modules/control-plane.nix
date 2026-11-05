@@ -14,7 +14,6 @@ in
   environment.systemPackages = [ pkgs.kubectl ];
 
   boot.kernel.sysctl = {
-    "net.ipv4.ip_forward" = 1;
     "net.ipv6.conf.all.forwarding" = 1;
     "net.ipv6.conf.default.accept_ra" = 2;
     "net.ipv6.conf.ens3.accept_ra" = 2;
