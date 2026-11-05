@@ -6,9 +6,13 @@ The generated flake.lock was committed in 40e9658d31b532d5f6edcf820a5785f4b0e72e
 
     sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild switch --flake .#k8s-control-1
 
-Post-switch validation reported no failed systemd units, API readiness ok, node k8s-control-1 Ready at 10.1.1.168, and CoreDNS 1/1 Running. Reboot recovery and worker-node operation remain untested.
+Post-switch validation reported no failed systemd units, API readiness ok, node k8s-control-1 Ready at 10.1.1.168, and CoreDNS 1/1 Running.
 
-This does not establish cross-node networking, TCP DNS, arbitrary application Service routing, ingress, HA or production PKI. The worker is not yet configured. Node address persistence and reboot recovery remain untested.
+Reboot recovery was then validated. After reboot, the node retained IP 10.1.1.168, reported no failed systemd units, API readiness returned ok, Flannel was active, the node was Ready, and CoreDNS recovered to 1/1 Running. A replacement DNS test pod resolved the internal kubernetes.default Service, external example.com over IPv4 and IPv6, and the IPv6 kube-dns Service AAAA record. This validates control-node reboot recovery for the tested single-node baseline; it does not validate worker-node recovery or multi-node VXLAN forwarding.
+
+The node carries node-role.kubernetes.io/master=true:NoSchedule and unschedulable=true:NoSchedule. The DNS test manifest therefore tolerates both taints. The unschedulable taint is not a standard automatic control-plane taint; investigate its intended purpose before removing it. Do not use these tolerations as a general pattern for ordinary workloads.
+
+This does not establish cross-node networking, TCP DNS, arbitrary application Service routing, ingress, HA or production PKI. The worker is not yet configured.
 
 ## Pinned rebuild workflow
 
@@ -31,6 +35,6 @@ A plain nixos-rebuild command normally uses /etc/nixos and can select the older 
 
 ## Reboot validation
 
-Only after a successful switch and with CloudStack console access available, plan a reboot. After reconnecting, check hostname, ens3 IPv4/IPv6 addresses and default routes, failed systemd units, API readiness, node Ready state and CoreDNS rollout. Repeat DNS/IPv6 Service tests with the repository test client. DHCP/SLAAC addressing is not made static by a flake pin. Reserve addresses and investigate changes before modifying Kubernetes endpoint values.
+A reboot was performed with CloudStack console access available. After reconnecting, hostname, node IP, failed units, API readiness, node Ready state, Flannel status, CoreDNS rollout and DNS Service resolution were checked. Future reboots should repeat these checks. DHCP/SLAAC addressing is not made static by a flake pin. Reserve addresses and investigate changes before modifying Kubernetes endpoint values.
 
 If boot or networking fails, use the console and the previous NixOS boot generation. An OS rollback does not undo etcd or PKI data changes; never delete those directories as a generic repair step.
