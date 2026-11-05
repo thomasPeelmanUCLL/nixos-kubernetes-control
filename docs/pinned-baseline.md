@@ -2,35 +2,32 @@
 
 User-reported validation on 2026-11-05: API readiness passed; control node Ready on Kubernetes 1.36.3; no failed systemd units; a test pod received IPv4 and IPv6 addresses and pinged external IPv4/IPv6 destinations; Flannel nodes/get RBAC was fixed; API access from pods through the private endpoint and IPv4 API Service returned HTTP 200 after allowing TCP 6443 on mynet; CoreDNS became Ready; internal and external DNS resolved; a DNS query through the IPv6 kube-dns Service returned its AAAA record.
 
-This does not establish cross-node networking, TCP DNS, arbitrary application Service routing, ingress, HA or production PKI. The worker is not yet configured. Node address persistence and reboot recovery remain untested.
-
-## Pinning
-
-flake.nix selects nixpkgs revision 7dcdd87373d72e7a2173e4db02e20d3d7f495cfd, matching the revision inspected for the installed 26.05.13446.7dcdd87373d7 source. It reuses configuration.nix and enables the Nix flake CLI features. No pod/service CIDRs, SSH key or disk settings are changed by the flake wrapper. The pinned build still requires verification on the VM.
-
-Generate a real lock file on the node; no narHash or lock metadata has been invented in GitHub:
-
-    cd ~/nixos-kubernetes-control
-    git pull --ff-only
-    nix --extra-experimental-features 'nix-command flakes' flake lock
-    git add flake.lock
-    sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild build --flake .#k8s-control-1
-
-Staging flake.lock makes it visible to the Git-backed flake source; it does not push it to GitHub. Inspect and preserve the generated lock file and have it committed to the repository after validation. Never put secrets in the lock file or repository.
-
-If build succeeds, with the CloudStack console and a working SSH session open:
-
-    sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild test --flake .#k8s-control-1
-    sudo systemctl --failed --no-pager
-    sudo kubectl --kubeconfig=/etc/kubernetes/cluster-admin.kubeconfig get --raw=/readyz
-    sudo kubectl --kubeconfig=/etc/kubernetes/cluster-admin.kubeconfig get nodes -o wide
-    sudo kubectl --kubeconfig=/etc/kubernetes/cluster-admin.kubeconfig -n kube-system get pods -l k8s-app=kube-dns
-
-Also verify a fresh key-based SSH login and host IPv6. If healthy, persist with:
+The generated flake.lock was committed in 40e9658d31b532d5f6edcf820a5785f4b0e72e66. The local repository was then synchronized, the lock file was clean, and the pinned configuration built and switched successfully using:
 
     sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild switch --flake .#k8s-control-1
 
-Use --flake .#k8s-control-1 for subsequent rebuilds from this repository. A plain nixos-rebuild command normally uses /etc/nixos and can select the older inline configuration. Plain kubectl-managed DNS manifests remain separate from OS rebuilds. Do not run flake updates casually: review the input revision and Kubernetes version assertion before upgrades.
+Post-switch validation reported no failed systemd units, API readiness ok, node k8s-control-1 Ready at 10.1.1.168, and CoreDNS 1/1 Running. Reboot recovery and worker-node operation remain untested.
+
+This does not establish cross-node networking, TCP DNS, arbitrary application Service routing, ingress, HA or production PKI. The worker is not yet configured. Node address persistence and reboot recovery remain untested.
+
+## Pinned rebuild workflow
+
+flake.nix selects nixpkgs revision 7dcdd87373d72e7a2173e4db02e20d3d7f495cfd, matching the revision inspected for the installed 26.05.13446.7dcdd87373d7 source. It reuses configuration.nix and enables the Nix flake CLI features. No pod/service CIDRs, SSH key or disk settings are changed by the flake wrapper.
+
+The committed flake.lock pins nixpkgs revision 7dcdd87373d72e7a2173e4db02e20d3d7f495cfd with narHash sha256-tItrb9M8eYA6WhFgmT9tpGKueri3+wRuVA952o/2xSU=. Do not invent or manually edit lock metadata; regenerate it only when intentionally changing an input.
+
+For normal rebuilds from this repository:
+
+    cd ~/nixos-kubernetes-control
+    git pull --ff-only
+    sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild build --flake .#k8s-control-1
+    sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild test --flake .#k8s-control-1
+
+After validating a test activation, persist it with:
+
+    sudo env NIX_CONFIG='experimental-features = nix-command flakes' nixos-rebuild switch --flake .#k8s-control-1
+
+A plain nixos-rebuild command normally uses /etc/nixos and can select the older inline configuration. Plain kubectl-managed DNS manifests remain separate from OS rebuilds. Do not run flake updates casually: review the input revision and Kubernetes version assertion before upgrades.
 
 ## Reboot validation
 
