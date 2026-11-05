@@ -15,8 +15,7 @@
       PermitRootLogin = "no";
       AllowUsers = [ "tom" ];
       PubkeyAuthentication = true;
-      # Disable only after a separate key-based SSH login succeeds.
-      PasswordAuthentication = true;
+      PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
       X11Forwarding = false;
     };
