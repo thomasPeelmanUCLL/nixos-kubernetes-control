@@ -10,6 +10,11 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
   networking.networkmanager.enable = true;
+
+  # Enroll with `sudo netbird up` after rebuilding; keep credentials out of Git.
+  services.netbird.enable = true;
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+
   users.users.tom = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
