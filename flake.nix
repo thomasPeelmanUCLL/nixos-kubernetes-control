@@ -8,6 +8,7 @@
       system = "x86_64-linux";
       modules = [
         ./configuration.nix
+        ./modules/worker-firewall.nix
         { nix.settings.experimental-features = [ "nix-command" "flakes" ]; }
       ];
     };
