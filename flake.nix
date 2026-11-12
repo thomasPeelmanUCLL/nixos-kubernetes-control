@@ -9,6 +9,7 @@
       modules = [
         ./configuration.nix
         ./modules/worker-firewall.nix
+        ./modules/worker-hostname.nix
         { nix.settings.experimental-features = [ "nix-command" "flakes" ]; }
       ];
     };
