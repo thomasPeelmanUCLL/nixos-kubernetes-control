@@ -6,8 +6,8 @@ let
   worker6 = "2001:6a8:2880:1483:7145:4d72:a74d:4a32";
   rules = [
     "${pkgs.iptables}/bin/iptables -w -A nixos-fw -i ens3 -s ${worker4}/32 -d ${control4}/32 -p tcp --dport 8888 -j nixos-fw-accept"
-    "${pkgs.iptables}/bin/iptables -w -A nixos-fw -i ens3 -s ${worker4}/32 -d ${control4}/32 -p udp --dport 8472 -j nixos-fw-accept"
-    "${pkgs.iptables}/bin/ip6tables -w -A nixos-fw -i ens3 -s ${worker6}/128 -d ${control6}/128 -p udp --dport 8472 -j nixos-fw-accept"
+    "${pkgs.iptables}/bin/iptables -w -A nixos-fw -i ens3 -s ${worker4}/32 -d ${control4}/32 -p udp --dport 4789 -j nixos-fw-accept"
+    "${pkgs.iptables}/bin/iptables -w -A nixos-fw -i ens3 -s ${worker4}/32 -d ${control4}/32 -p tcp --dport 5473 -j nixos-fw-accept"
   ];
 in
 {
