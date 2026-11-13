@@ -8,6 +8,7 @@
       system = "x86_64-linux";
       modules = [
         ./configuration.nix
+        ./modules/calico.nix
         ./modules/worker-firewall.nix
         ./modules/worker-hostname.nix
         { nix.settings.experimental-features = [ "nix-command" "flakes" ]; }
