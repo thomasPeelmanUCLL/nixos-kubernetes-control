@@ -19,7 +19,7 @@
         https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml \
         -o /run/metrics-server-components.yaml
 
-      ${pkgs.kubectl}/bin/kubectl apply --server-side \
+      ${pkgs.kubectl}/bin/kubectl apply --server-side --force-conflicts \
         -f /run/metrics-server-components.yaml
 
       # Lab workaround: the kubelet serving certificates do not currently
