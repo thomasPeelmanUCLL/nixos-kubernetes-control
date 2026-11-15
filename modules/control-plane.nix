@@ -6,6 +6,7 @@ let
   pods6 = "fd73:7ab4:1c90:100::/56";
   services4 = "10.96.0.0/16";
   services6 = "fd73:7ab4:1c90:200::/112";
+  calicoVersion = "v3.30.2";
 in
 {
   # Experimental lab configuration: build and inspect before activation.
@@ -48,25 +49,7 @@ in
 
     # Install DNS separately after verifying the control plane and CNI.
     addons.dns.enable = false;
-    flannel = {
-      enable = true;
-      openFirewallPorts = false;
-    };
   };
-
-  services.flannel = {
-    iface = "ens3";
-    publicIp = node4;
-    # The Flannel module expects an IPv4-only Network field.
-    network = lib.mkForce pods4;
-    extraNetworkConfig = {
-      EnableIPv4 = true;
-      EnableIPv6 = true;
-      IPv6Network = pods6;
-      IPv6SubnetLen = 64;
-    };
-  };
-  systemd.services.flannel.environment.FLANNELD_IP_MASQ = "true";
 
   # Do not expose the certificate issuer on public interfaces.
   services.cfssl.address = lib.mkForce node4;
