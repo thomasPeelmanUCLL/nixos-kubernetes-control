@@ -7,6 +7,7 @@
     ./modules/calico.nix
     ./modules/flannel-rbac.nix
     ./modules/pod-api-access.nix
+    ./modules/metrics-server.nix
   ];
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
