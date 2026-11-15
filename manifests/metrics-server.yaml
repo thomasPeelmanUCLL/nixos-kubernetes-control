@@ -1,0 +1,11 @@
+# Applies the official metrics-server components.
+# TODO: replace this bootstrap manifest with a pinned, Nix-fetched release
+# once the deployment has been validated.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kube-system
+---
+# The official metrics-server components are applied by
+# modules/metrics-server.nix using kubectl. This file is intentionally
+# minimal until the release is pinned and vendored into the repository.
