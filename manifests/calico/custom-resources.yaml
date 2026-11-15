@@ -1,15 +1,10 @@
-apiVersion: operator.tigera.io/v1
-kind: Installation
-metadata:
-  name: default
-spec:
-  variant: Calico
-  calicoNetwork:
-    bgp: Disabled
-    ipPools:
-      - cidr: 10.244.0.0/16
-        encapsulation: VXLAN
-        natOutgoing: Enabled
-        nodeSelector: all()
-  nodeAddressAutodetectionV4:
-    interface: ens3
+# DEPRECATED: do not apply this file.
+#
+# This repository uses the manifest-based Calico installation in
+# manifests/calico/calico-v3.30.2-vxlan.yaml.
+#
+# A Tigera operator Installation must not be combined with that manifest:
+# the operator and the static manifest can create conflicting Calico resources.
+#
+# For a VXLAN-only cluster with BGP disabled, apply only:
+#   manifests/calico/calico-v3.30.2-vxlan.yaml
