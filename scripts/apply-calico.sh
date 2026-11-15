@@ -12,6 +12,13 @@ for manifest in "${manifest_files[@]}"; do
   git -C "$repo_root" ls-files --error-unmatch "$manifest" >/dev/null
 done
 
+if kubectl --kubeconfig="$kubeconfig" get installations.operator.tigera.io >/dev/null 2>&1; then
+  echo "ERROR: a Tigera operator Installation already exists."
+  echo "This repository uses the manifest-based Calico installation only."
+  echo "Remove the operator Installation and its stale resources before continuing."
+  exit 1
+fi
+
 echo "This will apply the tracked Calico manifests to the current cluster:"
 for manifest in "${manifest_files[@]}"; do
   echo "  - $manifest"
@@ -27,4 +34,5 @@ for manifest in "${manifest_files[@]}"; do
   kubectl --kubeconfig="$kubeconfig" apply -f "$repo_root/$manifest"
 done
 
-echo "Calico manifests applied. Keep Flannel running until workloads are recreated and verified."
+echo "Calico manifests applied."
+echo "Wait for calico-node pods to become ready before recreating workloads."

@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ./modules/base.nix
     ./modules/control-plane.nix
+    ./modules/calico.nix
     ./modules/flannel-rbac.nix
     ./modules/pod-api-access.nix
   ];
