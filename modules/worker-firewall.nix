@@ -18,8 +18,6 @@ in
     (rule: (builtins.replaceStrings [ "-A nixos-fw" ] [ "-D nixos-fw" ] rule) + " || true")
     rules;
 
-  systemd.services.flannel.environment.FLANNELD_PUBLIC_IPV6 = control6;
-
   assertions = [
     {
       assertion = !config.networking.nftables.enable;
